@@ -63,18 +63,5 @@ public class ThymeController{
 
         teamView.addObject("response", resp);
         return teamView;
-
-        /**Sample Response
-         [
-           {
-                name: Los Angeles Clippers,
-                abbr: LAC
-           },
-           {
-                name: Washnington Wizards,
-                abbr: WW
-           }
-         ]
-         */
     }
 }
