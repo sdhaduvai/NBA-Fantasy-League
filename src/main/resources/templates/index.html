@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:td="http://www.w3.org/1999/XSL/Transform">
+    <head>
+        <title>Bootstrap Example</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <!-- Brand/logo -->
+            <a class="navbar-brand bg-dark"  href="index"><img src="new_logo.jpg" width="30" height="30"> Live Basketball</a>
+            <!-- Links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="index">Index</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="teamSelection">Select Favourite Teams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="container">
+            <div>
+                <h3>Welcome Sreekar</h3>
+            </div>
+
+            <h3>Your Teams:</h3>
+            <table class="table table-dark">
+                <thead>
+                <tr>
+                    <th scope="col">Team Abbreviation</th>
+                    <th scope="col">Team Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="obj : ${response}">
+                    <td th:text="${obj.abbr}" scope="Selection" />
+                    <td th:text="${obj.name}" scope="Selection" />
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+
+</html>

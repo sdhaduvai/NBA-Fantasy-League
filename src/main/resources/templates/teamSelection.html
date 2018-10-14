@@ -1,0 +1,47 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Bootstrap Example</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+        <script src="jquery-1.11.2.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <!-- Brand/logo -->
+            <a class="navbar-brand bg-dark"  href="index"><img src="new_logo.jpg" width="30" height="30"> Live Basketball</a>
+
+            <!-- Links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="index">Index</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="teamSelection">Select Favourite Teams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="container">
+            <div>
+                <h4>Choose Your Team</h4>
+                <form id="teamsForm" action="saveTeams" method="post">
+                    <select multiple class="form-control" id="teams" name ="teams">
+                        <option value="WW">Washington Wizards</option>
+                        <option value="MH">Miami Heat</option>
+                        <option value="LAC">Los Angeles Clippers</option>
+                    </select>
+                    <input type="submit" value="submit" class="btn btn-primary" />
+                </form>
+            </div>
+        </div>
+    </body>
+
+</html>
