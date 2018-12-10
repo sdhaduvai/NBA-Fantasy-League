@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your HomePage</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <!-- Brand/logo -->
+    <a class="navbar-brand bg-dark"  href="index"><img src="img/new_logo.jpg" width="30" height="30"> Live Basketball</a>
+
+    <!-- Links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="index">HomePage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teamRankings">View Team Rankings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teams">View All Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/notifications">Notifications</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+<center><h3>
+Hello <p th:text="${name}" /> <br>
+Here are your favorite teams:</h3></center>
+<div class="container">
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">TeamName</th>
+    </tr>
+    </thead>
+
+    <tr th:each="obj, iterStat: ${favorites}" >
+        <td th:text="${obj}" />
+    </tr>
+</table></div> <br><br><br><br><br><br>
+
+<center><h3>Yesterday's matches' scores:</h3></center>
+<div class="container">
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Date</th>
+        <th scope="col">Time</th>
+        <th scope="col">Home Team</th>
+        <th scope="col">Away team</th>
+        <th scope="col">Score</th>
+    </tr>
+    </thead>
+    <tr th:each="gameDetail,iterStat : ${gameDetails}" >
+        <td th:text="${gameDetail.get('id')}">
+        <td th:text="${gameDetail.get('date')}" >  </td>
+        <td th:text="${gameDetail.get('time')}" >  </td>
+        <td th:text="${gameDetail.get('homeTeam')}" >  </td>
+        <td th:text="${gameDetail.get('awayTeam')}" >  </td>
+        <td th:text="${gameDetail.get('Score')}" >  </td>
+    </tr>
+</table></div><br><br><br><br><br>
+
+
+<h3><center>Today's upcoming matches:</center></h3>
+<div class="container">
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Match ID</th>
+        <th scope="col">Date</th>
+        <th scope="col">Time</th>
+        <th scope="col">Home Team</th>
+        <th scope="col">Away Team</th>
+        <th scope="col">Location</th>
+    </tr>
+    </thead>
+
+    <tr th:each="match : ${todayMatch}" >
+        <td th:text="${match.id}" />
+        <td  th:text="${match.date}"/>
+        <td th:text="${match.time}"/>
+        <td th:text="${match.homeTeam}"/>
+        <td th:text="${match.awayTeam}"/>
+        <td th:text="${match.location}"/>
+    </tr>
+</table></div>
+
+</body>
+</html>

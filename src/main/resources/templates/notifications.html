@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Notifications</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <!-- Brand/logo -->
+    <a class="navbar-brand bg-dark"  href="index"><img src="img/new_logo.jpg" width="30" height="30"> Live Basketball</a>
+
+    <!-- Links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="index">HomePage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teamRankings">View Team Rankings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teams">View All Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/notifications">Notifications</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+<div th:each="element, iterStat: ${forRendering}">
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Time</th>
+            <th scope="col">Home Team</th>
+            <th scope="col">Away team</th>
+            <th scope="col">Score</th>
+        </tr>
+        </thead>
+        <tr th:each="gameDetail,iterStat : ${element}" >
+            <td th:text="${gameDetail.get('id')}">
+            <td th:text="${gameDetail.get('date')}" >  </td>
+            <td th:text="${gameDetail.get('time')}" >  </td>
+            <td th:text="${gameDetail.get('homeTeam')}" >  </td>
+            <td th:text="${gameDetail.get('awayTeam')}" >  </td>
+            <td th:text="${gameDetail.get('Score')}" >  </td>
+        </tr>
+    </table>
+</div>
+    <br><br><br>
+</div>
+
+</body>
+</html>
