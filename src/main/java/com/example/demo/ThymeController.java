@@ -35,7 +35,7 @@ public class ThymeController{
         teamNames.put("WW", "Washington Wizards");
     }
 
-    @GetMapping("/start")
+    @GetMapping("/login")
     public String renderLogin()
     {
         return "Facebook";
@@ -58,10 +58,42 @@ public class ThymeController{
         return "redirect:/saveFBUser?id="+id;
     }
 
-    @GetMapping("/teamSelection")
-    public String renderteamSelection () {
-        return "teamSelection";
+    @PostMapping("/saveselections")
+    public String renderteamSelections (@RequestParam("teams") String teams, HttpSession session) {
+        String[] allTeams = teams.split(",");
+
+        String userID = (String) session.getAttribute("userID");
+        String name = session.getAttribute("name").toString();
+        Iterable<FavoriteTeams> listOfFavorites = favoriteTeamsRepository.findAll();
+        int m = 0;
+
+        for(String team : allTeams) {
+            for (FavoriteTeams onerow : listOfFavorites) {
+                if (onerow.getTeamName().equals(team) && onerow.getUserID().equals(userID)) {
+                    m = 1;
+                }
+            }
+                if(m == 1) {
+                    m = 0;
+                    continue;
+                }
+                else {
+
+                    FavoriteTeams newRow = new FavoriteTeams();
+                    newRow.setUserID(userID);
+                    newRow.setTeamName(team);
+                    newRow.setLastChecked(todayDate());
+                    favoriteTeamsRepository.save(newRow);
+                }
+            }
+
+
+        return "redirect:/saveFBUser?id="+userID;
+
+
     }
+
+
 
     @PostMapping("/saveFBUser")
     public ModelAndView addFBEntry(@RequestParam("fbid") String id, @RequestParam("fbname") String name, HttpSession session){
@@ -247,6 +279,52 @@ public class ThymeController{
         return showTeams;
     }
 
+    public ArrayList<HashMap<String, String>> generateTeams(HttpSession session) {
+        String name = session.getAttribute("name").toString();
+        ArrayList<HashMap<String, String>> gameDetails = new ArrayList<HashMap<String, String>>();
+
+        //Endpoint to call
+        String url ="https://api.mysportsfeeds.com/v1.2/pull/nba/2018-2019-regular/overall_team_standings.json";
+        //Encode Username and Password
+        String encoding = Base64.getEncoder().encodeToString("5d290d3c-ce38-4147-9af5-43ab32:codename045".getBytes());
+        // TOKEN:PASS
+        //Add headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Basic "+encoding);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+
+        //Make the call
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+        String str = response.getBody();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode root = mapper.readTree(str);
+            JsonNode gameScores = root.get("overallteamstandings").get("teamstandingsentry");
+
+            if(gameScores != null) {
+
+                for(JsonNode score : gameScores){
+                    JsonNode game = score.get("team");
+                    HashMap<String, String> gameDetail = new HashMap<>();
+                    gameDetail.put("id", game.get("ID").asText());
+                    gameDetail.put("city", game.get("City").asText());
+                    gameDetail.put("name", game.get("Name").asText());
+                    gameDetail.put("Abbreviation", game.get("Abbreviation").asText());
+                    gameDetails.add(gameDetail);
+
+                }
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        return gameDetails;
+    }
+
     //Using PoJo Classes
     @GetMapping("/teamRankings")
     public ModelAndView getTeams(HttpSession session) {
@@ -364,50 +442,57 @@ public class ThymeController{
 
     }
 
-//    @GetMapping("/notifications")
-//    public ModelAndView getNotifications(HttpSession session) {
-//        ModelAndView displayNotifications = new ModelAndView("notifications");
-//        String userID = (String) session.getAttribute("userID");
-//        List<String> simpleList = new ArrayList<String>();
-//        ArrayList<HashMap<String, String>> allRecords = new ArrayList<HashMap<String, String>>();
-//        Iterable<FavoriteTeams> listOfFavorites = favoriteTeamsRepository.findAll();
-//        for (FavoriteTeams row : listOfFavorites) {
-//            if (row.getUserID().equals(userID)) {
-//                HashMap<String, String> usersFavorites = new HashMap<>();
-//                usersFavorites.put("name", row.getTeamName());
-//                usersFavorites.put("lastChecked", row.getLastChecked());
-//                allRecords.add(usersFavorites);
-//                simpleList.add(row.getTeamName());
-//            }
-//        }
-//
-//        for (HashMap<String, String> element : allRecords) {
-//            List<Date> allDates = new ArrayList();
-//            DateTime lastChecked = new DateTime(element.get("lastChecked"));
-//            DateTime currentDate = new DateTime(todayDate());
-//
-//            while (lastChecked.before(currentDate)) {
-//                allDates.add(lastChecked.toDate());
-//                lastChecked = lastChecked.plusDays(1);
-//            }
-//
-//            List<ArrayList<HashMap<String, String>>> forRendering = new ArrayList<ArrayList<HashMap<String, String>>>();
-//            String newDates = "";
-//            try {
-//                for (Date date:allDates) {
-//                    ArrayList<HashMap<String, String>> oneDate = new ArrayList<HashMap<String, String>>();
-//                    oneDate = fetchAllNotifications(element.get("name"), date.toString());
-//                    forRendering.add(oneDate);
-//                }
-//            } catch (Exception e) {
-//                System.out.println("first day at the website");
-//            }
-//
-//            displayNotifications.addObject("notifications", forRendering);
-//            return displayNotifications;
-//        }
-//        return displayNotifications;
-//    }
+    @GetMapping("/selectTeams")
+    public ModelAndView selectTeams(HttpSession session){
+        ModelAndView teamSelection = new ModelAndView("teamSelection");
+        ArrayList<HashMap<String, String>> allTeams = generateTeams(session);
+        teamSelection.addObject("allTeams", allTeams);
+        return teamSelection;
+    }
+
+
+
+    @GetMapping("/notifications")
+    public ModelAndView getNotifications(HttpSession session) {
+        ModelAndView displayNotifications = new ModelAndView("notifications");
+        String userID = (String) session.getAttribute("userID");
+        List<String> simpleList = new ArrayList<String>();
+        List<ArrayList<HashMap<String, String>>> forRendering = new ArrayList<ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> allRecords = new ArrayList<HashMap<String, String>>();
+        Iterable<FavoriteTeams> listOfFavorites = favoriteTeamsRepository.findAll();
+        for (FavoriteTeams row : listOfFavorites) {
+            if (row.getUserID().equals(userID)) {
+                HashMap<String, String> usersFavorites = new HashMap<>();
+                usersFavorites.put("name", row.getTeamName());
+                usersFavorites.put("lastChecked", row.getLastChecked());
+                allRecords.add(usersFavorites);
+                simpleList.add(row.getTeamName());
+            }
+        }
+
+        for (HashMap<String, String> element : allRecords) {
+            List<Date> allDates = new ArrayList();
+            DateTime lastChecked = new DateTime(element.get("lastChecked"));
+            DateTime currentDate = new DateTime(todayDate());
+
+            while (lastChecked.isBefore(currentDate)) {
+                allDates.add(lastChecked.toDate());
+                lastChecked = lastChecked.plusDays(1);
+            }
+
+            String newDates = "";
+
+                for (Date date:allDates) {
+                    ArrayList<HashMap<String, String>> oneDate = new ArrayList<HashMap<String, String>>();
+                    oneDate = fetchAllNotifications(element.get("name"), date.toString());
+                    forRendering.add(oneDate);
+                }
+
+
+        }
+        displayNotifications.addObject("notifications", forRendering);
+        return displayNotifications;
+    }
 
     public ArrayList<HashMap<String, String>> fetchAllNotifications(String name, String date) {
         ArrayList<HashMap<String, String>> gameDetails = new ArrayList<HashMap<String, String>>();
@@ -605,7 +690,7 @@ public class ThymeController{
     public String logout(HttpSession session)
     {
         session.invalidate();
-        return "redirect:/start";
+        return "redirect:/login";
     }
 
     public String todayDate(){
