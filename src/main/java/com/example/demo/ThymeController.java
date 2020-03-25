@@ -455,42 +455,42 @@ public class ThymeController{
     @GetMapping("/notifications")
     public ModelAndView getNotifications(HttpSession session) {
         ModelAndView displayNotifications = new ModelAndView("notifications");
-        String userID = (String) session.getAttribute("userID");
-        List<String> simpleList = new ArrayList<String>();
-        List<ArrayList<HashMap<String, String>>> forRendering = new ArrayList<ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> allRecords = new ArrayList<HashMap<String, String>>();
-        Iterable<FavoriteTeams> listOfFavorites = favoriteTeamsRepository.findAll();
-        for (FavoriteTeams row : listOfFavorites) {
-            if (row.getUserID().equals(userID)) {
-                HashMap<String, String> usersFavorites = new HashMap<>();
-                usersFavorites.put("name", row.getTeamName());
-                usersFavorites.put("lastChecked", row.getLastChecked());
-                allRecords.add(usersFavorites);
-                simpleList.add(row.getTeamName());
-            }
-        }
-
-        for (HashMap<String, String> element : allRecords) {
-            List<Date> allDates = new ArrayList();
-            DateTime lastChecked = new DateTime(element.get("lastChecked"));
-            DateTime currentDate = new DateTime(todayDate());
-
-            while (lastChecked.isBefore(currentDate)) {
-                allDates.add(lastChecked.toDate());
-                lastChecked = lastChecked.plusDays(1);
-            }
-
-            String newDates = "";
-
-                for (Date date:allDates) {
-                    ArrayList<HashMap<String, String>> oneDate = new ArrayList<HashMap<String, String>>();
-                    oneDate = fetchAllNotifications(element.get("name"), date.toString());
-                    forRendering.add(oneDate);
-                }
-
-
-        }
-        displayNotifications.addObject("notifications", forRendering);
+//        String userID = (String) session.getAttribute("userID");
+//        List<String> simpleList = new ArrayList<String>();
+//        List<ArrayList<HashMap<String, String>>> forRendering = new ArrayList<ArrayList<HashMap<String, String>>>();
+//        ArrayList<HashMap<String, String>> allRecords = new ArrayList<HashMap<String, String>>();
+//        Iterable<FavoriteTeams> listOfFavorites = favoriteTeamsRepository.findAll();
+//        for (FavoriteTeams row : listOfFavorites) {
+//            if (row.getUserID().equals(userID)) {
+//                HashMap<String, String> usersFavorites = new HashMap<>();
+//                usersFavorites.put("name", row.getTeamName());
+//                usersFavorites.put("lastChecked", row.getLastChecked());
+//                allRecords.add(usersFavorites);
+//                simpleList.add(row.getTeamName());
+//            }
+//        }
+//
+//        for (HashMap<String, String> element : allRecords) {
+//            List<Date> allDates = new ArrayList();
+//            DateTime lastChecked = new DateTime(element.get("lastChecked"));
+//            DateTime currentDate = new DateTime(todayDate());
+//
+//            while (lastChecked.isBefore(currentDate)) {
+//                allDates.add(lastChecked.toDate());
+//                lastChecked = lastChecked.plusDays(1);
+//            }
+//
+//            String newDates = "";
+//
+//                for (Date date:allDates) {
+//                    ArrayList<HashMap<String, String>> oneDate = new ArrayList<HashMap<String, String>>();
+//                    oneDate = fetchAllNotifications(element.get("name"), date.toString());
+//                    forRendering.add(oneDate);
+//                }
+//
+//
+//        }
+//        displayNotifications.addObject("notifications", forRendering);
         return displayNotifications;
     }
 
@@ -535,8 +535,6 @@ public class ThymeController{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
 
         return gameDetails;
     }
